@@ -1,0 +1,15 @@
+[package]
+name = "sidewinder-docker"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sidewinder-core.workspace = true
+
+bollard = "0.18.1"
+futures-util = "0.3.31"
+
+anyhow.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+tracing.workspace = true

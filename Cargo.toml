@@ -1,0 +1,22 @@
+[workspace]
+resolver = "2"
+members = [
+    "src/core",
+    "src/drivers/docker", "src/sidewinder",
+]
+
+[workspace.dependencies]
+sidewinder-core = { path = "src/core" }
+
+# Execution Drivers
+sidewinder-docker = { path = "src/drivers/docker" }
+
+# Shared Packages
+anyhow = "1.0.92"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+tokio = { version = "1.18", features = ["full"] }
+tokio-stream = "0.1.17"
+tracing = "0.1.13"
+tracing-futures = "0.2.3"
+tracing-subscriber = "0.2.2"
