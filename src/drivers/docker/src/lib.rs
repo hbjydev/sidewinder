@@ -45,7 +45,11 @@ impl Driver for Docker {
         let container = reset_container_config(&conn, id.clone(), container_config).await?;
 
         conn.start_container::<String>(&container.id, None).await?;
-        tracing::info!("container for server {} started with id {}", id, container.id);
+        tracing::info!(
+            "container for server {} started with id {}",
+            id,
+            container.id
+        );
 
         Ok(Execution {
             id: container.id,

@@ -4,8 +4,7 @@ use anyhow::{anyhow, Result};
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct A2SConfig {
     pub address: String,
@@ -21,8 +20,7 @@ impl Default for A2SConfig {
     }
 }
 
-#[derive(Default, Clone, Debug, PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Default, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum RconPermission {
     /// The admin can perform any command.
@@ -35,8 +33,7 @@ pub enum RconPermission {
     Monitor,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RconConfig {
     pub address: String,
@@ -62,8 +59,7 @@ impl Default for RconConfig {
     }
 }
 
-#[derive(Default, Clone, Debug, PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Default, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum GamePlatform {
     /// PC
@@ -80,8 +76,7 @@ pub enum GamePlatform {
     PSN,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GameProperties {
     pub server_max_view_distance: u16,
@@ -118,8 +113,7 @@ impl Default for GameProperties {
     }
 }
 
-#[derive(Default, Clone, Debug, PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Default, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ModConfig {
     pub mod_id: String,
@@ -127,8 +121,7 @@ pub struct ModConfig {
     pub required: bool,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GameConfig {
     pub name: String,
@@ -165,8 +158,7 @@ impl Default for GameConfig {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct JoinQueueConfig {
     pub max_size: i16,
@@ -178,8 +170,7 @@ impl Default for JoinQueueConfig {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OperatingConfig {
     pub lobby_player_synchronise: bool,
@@ -212,8 +203,7 @@ impl Default for OperatingConfig {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Default)]
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ServerConfig {
     pub bind_address: String,
@@ -234,8 +224,13 @@ impl ServerConfig {
     }
 
     pub fn write_to_file(&self, id: String) -> Result<PathBuf> {
-        let dirs = ProjectDirs::from("moe", "hayden", "sidewinder").ok_or(anyhow!("could not find project directories"))?;
-        let cfg_dir_path = dirs.config_local_dir().to_path_buf().join("servers").join(format!("{}.json", id));
+        let dirs = ProjectDirs::from("moe", "hayden", "sidewinder")
+            .ok_or(anyhow!("could not find project directories"))?;
+        let cfg_dir_path = dirs
+            .config_local_dir()
+            .to_path_buf()
+            .join("servers")
+            .join(format!("{}.json", id));
 
         let cfg_str = self.to_json()?;
         if !fs::exists(cfg_dir_path.clone())? {
