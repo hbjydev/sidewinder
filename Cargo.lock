@@ -1011,6 +1011,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "sidewinder-api"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "serde",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "sidewinder-core"
 version = "0.1.0"
 dependencies = [
