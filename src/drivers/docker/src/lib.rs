@@ -93,12 +93,10 @@ async fn ensure_image(conn: &BoDocker) -> Result<()> {
 }
 
 fn get_create_container_opts(id: String) -> CreateContainerOptions<String> {
-    let opts = CreateContainerOptions {
+    CreateContainerOptions {
         name: format!("swndr-{}", id),
         ..Default::default()
-    };
-
-    opts
+    }
 }
 
 #[tracing::instrument]
@@ -143,7 +141,7 @@ impl ServerVolumes {
 }
 
 async fn ensure_volumes(conn: &BoDocker, id: String) -> Result<ServerVolumes> {
-    let profile = get_or_create_volume(&conn, id.clone(), "profile").await?;
+    let profile = get_or_create_volume(conn, id.clone(), "profile").await?;
 
     Ok(ServerVolumes::new(profile))
 }
@@ -232,7 +230,7 @@ async fn reset_container_config(
             // Recreate the container
             conn.stop_container(&container_name, None).await?;
             conn.remove_container(&container_name, None).await?;
-            create_container(&conn, id, container_config).await
+            create_container(conn, id, container_config).await
         }
 
         Err(err) => match err {
@@ -241,7 +239,7 @@ async fn reset_container_config(
                 status_code,
                 message,
             } => match status_code {
-                404 => create_container(&conn, id, container_config).await,
+                404 => create_container(conn, id, container_config).await,
                 _ => Err(anyhow!("failed to get docker container: {}", message)),
             },
             err => Err(err.into()),
