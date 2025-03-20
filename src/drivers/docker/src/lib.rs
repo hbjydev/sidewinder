@@ -1,10 +1,10 @@
-use std::path::PathBuf;
+use std::{collections::HashMap, path::PathBuf};
 
 use anyhow::{anyhow, Result};
 use bollard::{
-    container::{Config, CreateContainerOptions},
+    container::{Config, CreateContainerOptions, NetworkingConfig},
     image::CreateImageOptions,
-    secret::{ContainerCreateResponse, HostConfig, Mount, MountTypeEnum, Volume},
+    secret::{ContainerCreateResponse, HostConfig, Mount, MountTypeEnum, PortBinding, Volume},
     volume::CreateVolumeOptions,
     Docker as BoDocker,
 };
@@ -153,9 +153,29 @@ fn get_container_config(
     volumes: ServerVolumes,
     config_secret_path: PathBuf,
 ) -> Config<String> {
+    let mut exposed_ports = HashMap::new();
+    let mut port_bindings = HashMap::new();
+
+    for port in vec![
+        _cfg.bind_port.unwrap_or_default(),
+        _cfg.a2s.port,
+        _cfg.rcon.port,
+    ] {
+        exposed_ports.insert(format!("{}/tcp+udp", port), HashMap::new());
+        port_bindings.insert(
+            format!("{}/tcp+udp", port),
+            Some(vec![PortBinding {
+                host_port: Some(port.to_string()),
+                ..Default::default()
+            }]),
+        );
+    }
+
     Config {
         image: Some(IMAGE.to_string()),
+        exposed_ports: Some(exposed_ports),
         host_config: Some(HostConfig {
+            port_bindings: Some(port_bindings),
             mounts: Some(vec![
                 Mount {
                     target: Some(String::from("/reforger/profile")),
