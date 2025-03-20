@@ -1,18 +1,21 @@
-use std::future::Future;
+use std::fmt::Debug;
 
 use anyhow::Result;
 
 use crate::server::ServerConfig;
+use crate::async_trait;
 
 use super::Execution;
 
-pub trait Driver {
-    fn run_server(
+#[async_trait]
+pub trait Driver: Debug + Send + Sync + 'static {
+    async fn run_server(
         &self,
         id: String,
         config: ServerConfig,
-    ) -> impl Future<Output = Result<super::Execution>>;
-    fn list_servers(&self) -> impl Future<Output = Result<Vec<super::Execution>>>;
-    fn stop_server(&self, execution: Execution) -> impl Future<Output = Result<()>>;
-    fn get_logs(&self, execution: Execution) -> impl Future<Output = Result<()>>;
+    ) -> Result<super::Execution>;
+
+    async fn list_servers(&self) -> Result<Vec<super::Execution>>;
+    async fn stop_server(&self, execution: Execution) -> Result<()>;
+    async fn get_logs(&self, execution: Execution) -> Result<()>;
 }

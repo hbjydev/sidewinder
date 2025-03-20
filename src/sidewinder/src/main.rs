@@ -1,24 +1,42 @@
+use std::sync::Arc;
+
 use anyhow::Result;
-use sidewinder_core::{exec::driver::Driver, server::ServerConfig};
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
+use clap::{Parser, ValueEnum};
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum CliDriver {
+    Docker,
+}
+
+#[derive(Parser)]
+#[command(version, about, long_about = None)]
+struct Cli {
+    /// The port to run the API on.
+    #[arg(short, long, default_value_t = 1234)]
+    port: i32,
+
+    /// The driver to use to control server instances.
+    #[arg(short, long, value_enum, default_value = "docker")]
+    driver: CliDriver,
+}
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    tracing_subscriber::fmt::init();
-
-    let docker = sidewinder_docker::Docker::new()?;
-
-    docker
-        .run_server(
-            String::from("abc123"),
-            ServerConfig {
-                bind_address: String::from("0.0.0.0"),
-                bind_port: Some(2001),
-                public_address: None,
-                public_port: 2001,
-                ..Default::default()
-            },
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::fmt::layer().with_target(false))
+        .with(
+            EnvFilter::try_from_default_env()
+                .or_else(|_| EnvFilter::try_new("info"))
+                .unwrap()
         )
-        .await?;
+        .init();
 
-    Ok(())
+    let args = Cli::parse();
+
+    let driver= match args.driver {
+        CliDriver::Docker => sidewinder_docker::Docker::new()?,
+    };
+
+    Ok(sidewinder_api::run_api(args.port, Arc::new(driver)).await?)
 }

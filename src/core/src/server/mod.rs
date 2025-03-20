@@ -241,3 +241,17 @@ impl ServerConfig {
         Ok(cfg_dir_path)
     }
 }
+
+pub struct Server {
+    pub id: String,
+    pub config: ServerConfig
+}
+
+impl Server {
+    pub fn new(config: ServerConfig) -> Self {
+        Self {
+            id: uuid::Uuid::new_v4().to_string(),
+            config,
+        }
+    }
+}

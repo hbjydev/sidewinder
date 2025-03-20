@@ -17,6 +17,7 @@ use tokio::sync::Mutex;
 
 const IMAGE: &str = "kexanone/reforger-server:latest";
 
+#[derive(Debug)]
 pub struct Docker {
     connection: Mutex<BoDocker>,
 }
@@ -30,6 +31,7 @@ impl Docker {
     }
 }
 
+#[sidewinder_core::async_trait]
 impl Driver for Docker {
     #[tracing::instrument(skip(self, config))]
     async fn run_server(&self, id: String, config: ServerConfig) -> Result<Execution> {

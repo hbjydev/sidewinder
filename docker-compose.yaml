@@ -1,0 +1,14 @@
+---
+volumes:
+  db: {}
+
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data
+    volumes:
+      - db:/data
+    ports:
+      - 5432:5432
