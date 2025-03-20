@@ -2,7 +2,7 @@ use std::{collections::HashMap, path::PathBuf};
 
 use anyhow::{anyhow, Result};
 use bollard::{
-    container::{Config, CreateContainerOptions, NetworkingConfig},
+    container::{Config, CreateContainerOptions},
     image::CreateImageOptions,
     secret::{ContainerCreateResponse, HostConfig, Mount, MountTypeEnum, PortBinding, Volume},
     volume::CreateVolumeOptions,
