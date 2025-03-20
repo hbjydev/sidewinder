@@ -141,7 +141,7 @@ impl ServerVolumes {
 }
 
 async fn ensure_volumes(conn: &BoDocker, id: String) -> Result<ServerVolumes> {
-    let profile = get_or_create_volume(&conn, id.clone(), "profile").await?;
+    let profile = get_or_create_volume(conn, id.clone(), "profile").await?;
 
     Ok(ServerVolumes::new(profile))
 }
