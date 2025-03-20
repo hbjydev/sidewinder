@@ -159,9 +159,18 @@ fn get_container_config(
         _cfg.a2s.port,
         _cfg.rcon.port,
     ] {
-        exposed_ports.insert(format!("{}/tcp+udp", port), HashMap::new());
+        exposed_ports.insert(format!("{}/tcp", port), HashMap::new());
+        exposed_ports.insert(format!("{}/udp", port), HashMap::new());
+
         port_bindings.insert(
-            format!("{}/tcp+udp", port),
+            format!("{}/tcp", port),
+            Some(vec![PortBinding {
+                host_port: Some(port.to_string()),
+                ..Default::default()
+            }]),
+        );
+        port_bindings.insert(
+            format!("{}/udp", port),
             Some(vec![PortBinding {
                 host_port: Some(port.to_string()),
                 ..Default::default()
